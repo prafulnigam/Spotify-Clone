@@ -8,22 +8,24 @@ const JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 const passport = require('passport');
 const User = require("./models/User")
+const authRoutes = require("./routes/auth")
 const app = express();
-const port = 8000;
+const port = 3000;
 
-
+app.use(express.json());
 // mongoose connect will be used to connect to the db to node & it has two arguements (1) url to db & (2) connection options
-mongoose.connect("mongodb+srv://prafulnigam16:" + process.env.MONGO_PASSWORD + "@cluster0.1g2mgi2.mongodb.net/?retryWrites=true&w=majority", 
-{
-    useNewUrlParser: true, // options of connection
+mongoose.connect("mongodb://127.0.0.1:27017/spotify", {
+    useNewUrlParser: true,
     useUnifiedTopology: true
 })
 .then(() => { 
-    console.log("Connected to Mongo"); // to check if monngo.connect is working
+    console.log("Connected to Mongo");
 })
 .catch((err) => {
-    console.log("Error while connecting to Mongo");
-});
+    console.error("Error while connecting to Mongo:", err);
+    // Fallback for offline mode, use an in-memory database or any other mechanism
+})
+
 
 // setup of passport-jwt
 let opts = {}
@@ -52,6 +54,8 @@ app.get("/", (req, res) => {
     // res contains all dsta for the response 
     res.send("Hello World");
 });
+
+app.use("/auth", authRoutes )
 
 app.listen(port, () => {
     console.log("Server is Live");

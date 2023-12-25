@@ -1,39 +1,46 @@
-// this file is for authentication -> Sign Up & Login 
-
 const express = require("express");
-const router = express.Router(); // idhar saari cheeze nahi nahi hai toh sirf router module ko kheecha hai 
-const User = require("../models/User")
-const becrypt = require ("becrypt");
+const router = express.Router();
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
 const getToken = require("../utils/helpers");
 
 router.post("/register", async (req, res) => {
-    // ye tab chalega jab /register pr jab register hoga user 
-    // My req.body will be of format {email, password, firstName, lastName, username}
+  try {
+    const { email, password, firstName, lastName, username } = req.body;
 
-    const {email, passowrd, firstName, lastName, username} = req.body;
+    // Check if user exists
+    const user = await User.findOne({ email: email });
 
-    // check if user exist 
-    const user = await User.findOne({email: email}); // jiski email meri req.body email ke same hai 
-    if(user) {
-        // by default status code is 200
-        return res.status(403).json({error: "A user with this email already exists"});
+    if (user) {
+      return res.status(403).json({ error: "A user with this email already exists" });
     }
 
-    // after this check the request is valid, so we will store user in db
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hashedPassword = bcrypt.hash(password, 10); // this is used to has the password which will decrypt it 
+    // Create a new user
     const newUserData = {
-        email,
-        passoword : hashedPassword, 
-        firstName, lastName, 
-        username,
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      username,
     };
+
     const newUser = await User.create(newUserData);
 
-    // create a token & return it to user 
+    // Create a token and return it to the user
     const token = await getToken(email, newUser);
-    const userToReturn = {...newUser.toJSON(), token};   // taking new user & converting it json 
-    delete userToReturn.password; // it is a security measure 
-    return res.status(200).json(userToReturn);
+    
+    // Return user data without the password
+    const userToReturn = { ...newUser.toJSON(), token };
+    delete userToReturn.password;
 
-})
+    return res.status(200).json(userToReturn);
+  } catch (error) {
+    console.error("Error during registration:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+module.exports = router;

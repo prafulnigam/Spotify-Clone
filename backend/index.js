@@ -9,6 +9,7 @@ const JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 const passport = require("passport");
 const User = require("./models/User");
+const playlistRoutes = require("./routes/playlist");
 const authRoutes = require("./routes/auth");
 const songRoutes = require("./routes/song");
 const app = express();
@@ -66,6 +67,7 @@ app.get("/", (req, res) => {
 //ROUTES
 app.use("/auth", authRoutes);
 app.use("/song", songRoutes);
+app.use("/playlist", playlistRoutes);
 
 // SERVER LISTENING
 app.listen(port, () => {

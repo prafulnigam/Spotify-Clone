@@ -2,6 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 const Song = require("../models/Song");
+const User = require("../models/User");
 
 router.post(
   "/create",
@@ -32,5 +33,30 @@ router.get(
   }
 );
 
+// GET ROUTE TO GET ALL SONG ANY ARTIST HAS PUBLISHED
+// I WILL SEND ARTIST ID AMD I WANT TO SEE ALL SONGS THAT ARTIST HAS PUBLISHED
+router.get(
+  "/get/artist",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const { artistId } = req.body;
+    // Check for artist
+    const artist = await User.find({ _id: artistId });
+    if (!artist) return res.status(301).json({ err: "Artist does not exist." });
+    const songs = await Song.find({ artist: artistId });
+    return res.status(200).json({ data: songs });
+  }
+);
+
+// GET ROUTE TO GET SINGLE SONG BY THE SONG NAME
+router.get(
+  "/get/songname",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const { songName } = req.body;
+    const songs = await Song.find({ name: songName });
+    return res.status(200).jsom({ data: songs });
+  }
+);
 
 module.exports = router;

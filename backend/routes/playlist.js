@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.router();
+const router = express.Router();
 const passport = require("passport");
 const Playlist = require("../models/Playlist");
 const User = require("../models/User");
@@ -11,12 +11,12 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const currentUser = req.user;
-    const { name, thubnail, songs } = req.body;
+    const { name, thumbnail, songs } = req.body;
     if (!name || !thumbnail || !songs)
       return res.status(301).json({ err: "Insufficient Data" });
     const playlistData = {
       name,
-      thubnail,
+      thumbnail,
       songs,
       owner: currentUser._id,
       collaborators: [],

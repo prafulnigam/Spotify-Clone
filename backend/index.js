@@ -26,7 +26,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Connected to Mongo");
+    console.log("#### Connected to Mongo ####");
   })
   .catch((err) => {
     console.error("Error while connecting to Mongo:", err);
@@ -71,5 +71,5 @@ app.use("/playlist", playlistRoutes);
 
 // SERVER LISTENING
 app.listen(port, () => {
-  console.log("Server is Live");
+  console.log("####   Server is Live   ####");
 });

@@ -31,11 +31,11 @@ router.post(
 // : is used for making playlistId a variable
 router.get(
   "/get/playlist/:playlistId",
-  passport.authenticate("jwt"),
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const playlistId = req.params.playlistId;
     const playlist = await Playlist.findOne({ _id: playlistId });
-    if (!playlist) res.status(301).json({ err: "Inavlid ID" });
+    if (!playlist) return res.status(404).json({ err: "Invalid ID" });
     return res.status(200).json(playlist);
   }
 );
@@ -59,7 +59,7 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const currentUser = req.user;
-    const { playlistId, songId } = req.body();
+    const { playlistId, songId } = req.body;
 
     // STEP 0 : GET THE PLAYLIST IF VALID
     const playlist = await Playlist.findOne({ _id: playlistId });
@@ -68,7 +68,7 @@ router.post(
 
     // Step 1 : check if CurrentUser owns the playlist or is a collaborator
     if (
-      playlist.owner != currentUser._id ||
+      !playlist.owner.equals(currentUser._id) && // because ids here are object & cannot be compared by == 
       !playlist.collaborators.includes(currentUser._id)
     )
       return res.status(400).json({ err: "Not allowed" });

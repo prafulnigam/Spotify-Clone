@@ -36,12 +36,12 @@ router.get(
 // GET ROUTE TO GET ALL SONG ANY ARTIST HAS PUBLISHED
 // I WILL SEND ARTIST ID AMD I WANT TO SEE ALL SONGS THAT ARTIST HAS PUBLISHED
 router.get(
-  "/get/artist",
+  "/get/artist/:artistId",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { artistId } = req.body;
+    const { artistId } = req.params;
     // Check for artist
-    const artist = await User.find({ _id: artistId });
+    const artist = await User.findOne({ _id: artistId });
     if (!artist) return res.status(301).json({ err: "Artist does not exist." });
     const songs = await Song.find({ artist: artistId });
     return res.status(200).json({ data: songs });

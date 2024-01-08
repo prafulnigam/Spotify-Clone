@@ -1,37 +1,34 @@
-// Step 1
+// models/Playlist.js
+
 const mongoose = require("mongoose");
 
-
-// Step 2 : CREATE MNONGOOSE SCHEMA 
-const Playlist = new mongoose.Schema({
-    name:{
-        type: String, 
-        required: true, // this is a compulsion 
+const playlistSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  thumbnail: {
+    type: String,
+    required: true,
+  },
+  songs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Song",
     },
-    thumbnail:{
-        type: String, // because URL will be stored
-        required: true,
+  ],
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  collaborators: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    owner: {
-        //will user userid provided by mongo, because artist is also a user of spotify 
-        type: mongoose.Types.ObjectId,
-        ref: "user",
-    },
-    // playlist mai songs kaunse hai 
-    // playlist ke collaborators
-    songs: [ // Array of Songs 
-        {
-        type: mongoose.Types.ObjectId,
-        ref: "song",
-        },
-    ],
-    collaborators: [ // Array of Collaborators 
-        {
-        type: mongoose.Types.ObjectId,
-        ref: "user",
-        },
-    ],
+  ],
 });
 
-const PlaylistModel = mongoose.model("Playlist", Playlist);
+const Playlist = mongoose.model("Playlist", playlistSchema);
+
 module.exports = Playlist;

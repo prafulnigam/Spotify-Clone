@@ -4,6 +4,7 @@
 // ALL THE IMPORTS
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors")
 require("dotenv").config();
 const JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
@@ -17,6 +18,7 @@ const port = 3000;
 
 // MIDDLEWARE
 app.use(express.json());
+app.use(cors());
 
 // CONNECTION WITH MONGODB
 // mongoose connect will be used to connect to the db to node & it has two arguements (1) url to db & (2) connection options

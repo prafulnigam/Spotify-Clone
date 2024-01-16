@@ -11,6 +11,11 @@ const User = new mongoose.Schema({
     lastName:{
         type: String,
     },
+    password: {
+        type: String,
+        required:true,
+        private: true
+    },
     email: {
         type: String,
         required: true,
